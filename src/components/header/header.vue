@@ -19,26 +19,65 @@
     	</div>
     	<div class="support-count" v-if="seller.supports">
     		<span class="count">{{seller.supports.length}}个</span>
-    		<span class="icon-keyboard_arrow_right"></span>
+    		<span class="icon-keyboard_arrow_right" @click="show"></span>
     	</div>
     </div>
     <div class="bulletin-wrapper">
     	<span class="bulletin-title"></span>
     	<span class="bulletin-text">{{seller.bulletin}}</span>
-    	<span class="icon-keyboard_arrow_right arrow_right"></span>
+    	<span class="icon-keyboard_arrow_right arrow_right" @click="show"></span>
     </div>
     <div class="bg">
     	<img :src="seller.avatar" alt="bg" width="100%" height="100%">
+    </div>
+    <div class="detail " v-show="detailShow">
+    	<div class="detail-wrapper clearfix">
+    		<div class="detail-main">
+    			<h1 class="detail-name">{{seller.name}}</h1>
+    			<div class="star-wrapper">
+    				<star :size="48" :score="seller.score"></star>
+    			</div>
+    			<div class="detail-title">
+    				<div class="line"></div>
+    			    <div class="text">商家优惠</div>
+    			    <div class="line"></div>
+    			</div>
+    			<ul v-if="seller.supports" class="supports">
+    				<li v-for="(item, index) in seller.supports" class="supports-item">
+    					<span class="supports-icon" :class="classMap[seller.supports[index].type]"></span>
+    					<span class="supports-text">{{item.description}}</span>
+    				</li>
+    			</ul>
+    		</div>
+    	</div>
+    	<div class="detail-close" @click="close">&times;</div>
     </div>
   </div>
 </template>
 
 <script>
+import star from '@/components/star/star'
 export default {
    props: {
    	seller:{
    		type: Object
    	}
+   },
+   components:{
+     star
+   },
+   data() {
+      return {
+      	detailShow: false
+      };
+   },
+   methods: {
+      show: function(){
+      	this.detailShow = true;
+      },
+      close: function(){
+      	this.detailShow = false;
+      }
    },
    created() {
    	this.classMap = ['decrease','discount','special','invoice','guarantee'];
@@ -51,6 +90,7 @@ export default {
 @import "../../common/stylus/mixin.styl"
 .header
    position: relative
+   background :rgba(7,17,27,.5)
    color:#fff
 .content-wrapper
   position: relative
@@ -158,4 +198,75 @@ img
  height:100%
  z-index: -1
  filter: blur(10px)
+.detail
+  position: fixed
+  top: 0
+  left: 0
+  z-index: 100
+  width: 100%
+  height: 100%
+  overflow: auto
+  background: rgba(7,17,27,.8)
+.detail-wrapper
+  min-height: 100%
+  width: 100%
+.detail-main
+  margin-top: 64px
+  padding-bottom: 64px
+  text-align: center
+ .detail-name
+  line-height: 16px
+  font-size: 16px
+  font-weight: 700
+ .star-wrapper
+  margin-top: 18px
+  padding: 2px 0
+  text-align: center
+ .detail-title
+  margin: 30px auto 24px
+  display: flex
+  width: 80%
+ .line
+  flex:1
+  position:relative
+  top: -6px
+  border-bottom: 1px solid rgba(255,255,255,.2)
+.supports
+ width: 80%
+ margin: 0 auto
+.supports-item
+ padding: 0 12px
+ margin-bottom: 12px
+ text-align:left
+ font-size: 0
+ &:last-child
+  margin-bottom: 0
+.supports-icon
+ display:inline-block
+ vertical-align: top
+ width: 16px
+ height: 16px
+ margin-right: 6px
+ background-size: 16px 16px
+ background-repeat: no-repeat
+ &.decrease
+  bg-image('decrease_2')
+ &.discount
+  bg-image('discount_2')
+ &.guarantee
+  bg-image('guarantee_2')
+ &.invoice
+  bg-image('invoice_2')
+ &.special
+  bg-image('special_2')
+.supports-text
+ line-height: 12px
+ font-size: 12px
+.detail-close
+  position: relative
+  width: 32px
+  height: 32px
+  margin: -64px auto -10px auto
+  clear: both
+  font-size: 24px
 </style>
