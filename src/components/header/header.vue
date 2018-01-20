@@ -30,7 +30,7 @@
     <div class="bg">
     	<img :src="seller.avatar" alt="bg" width="100%" height="100%">
     </div>
-    <div class="detail " v-show="detailShow">
+    <div class="detail " v-show="detailShow" transition="fade">
     	<div class="detail-wrapper clearfix">
     		<div class="detail-main">
     			<h1 class="detail-name">{{seller.name}}</h1>
@@ -48,6 +48,14 @@
     					<span class="supports-text">{{item.description}}</span>
     				</li>
     			</ul>
+    			<div class="detail-title">
+    				<div class="line"></div>
+    			    <div class="text">商家公告</div>
+    			    <div class="line"></div>
+    			</div>
+    			<div class="bulletin">
+    				<p class="contents">{{seller.bulletin}}</p>
+    			</div>
     		</div>
     	</div>
     	<div class="detail-close" @click="close">&times;</div>
@@ -86,7 +94,7 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style lang="stylus" rel="stylesheet/stylus">
+<style lang="stylus" rel="stylesheet/stylus" scoped>
 @import "../../common/stylus/mixin.styl"
 .header
    position: relative
@@ -206,7 +214,13 @@ img
   width: 100%
   height: 100%
   overflow: auto
+  transition: all 0.5s
   background: rgba(7,17,27,.8)
+  &.fade-transition
+   opacity: 1
+  &.fade-enter,&.fade-leave
+   opacity: 0
+   background: rgba(7,17,27,0)
 .detail-wrapper
   min-height: 100%
   width: 100%
@@ -226,6 +240,8 @@ img
   margin: 30px auto 24px
   display: flex
   width: 80%
+  .text
+   padding: 0 12px
  .line
   flex:1
   position:relative
@@ -262,6 +278,14 @@ img
 .supports-text
  line-height: 12px
  font-size: 12px
+.bulletin
+  width: 80%
+  margin: 0 auto
+  text-align:left
+ .contents
+  padding: 0 12px
+  line-height: 24px
+  font-size: 12px
 .detail-close
   position: relative
   width: 32px
