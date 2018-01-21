@@ -13,11 +13,11 @@
       </div>
       <div class="foods-wrapper" ref="foodsWrapper">
       	<ul>
-      		<li class="food-list food-hook"  v-for="(item,index) in goods">
+      		<li class="food-list food-hook"  v-for="(item,index) in goods" >
       			<h1 class="title">{{item.name}}</h1>
       			<ul>
-      				<li v-for="food in item.foods" class="food-item border-1px">
-      					<div class="icon">
+      				<li v-for="food in item.foods" class="food-item border-1px" >
+      					<div class="icon" @click="selectFoods(food,$event)">
       						<img :src="food.icon" width="57" height="57">
       					</div>
       					<div class="content">
@@ -31,17 +31,26 @@
       						  <span class="now">￥{{food.price}}</span>
       						  <span v-show="food.oldPrice" class="old">￥{{food.oldPrice}}</span>
       					    </div>
+      					    <div class="cartcontrol-wrapper">
+      					    	<cartcontrol :food="food"></cartcontrol>
+      					    </div>
       					</div>
       				</li>
       			</ul>
       		</li>
       	</ul>
       </div>
+      <shopcart :selectFood="selectFood":deliveryPrice="seller.deliveryPrice" 
+      :minPrice="seller.minPrice"></shopcart>
+      <food :food="selectedFood" ref="food"></food>
   </div>
 </template>
 
 <script>
 import BS from "better-scroll";
+import shopcart from "@/components/shopcart/shopcart";
+import cartcontrol from "@/components/cartcontrol/cartcontrol";
+import food from '@/components/food/food';
 const ERR_OK = 0;
 export default {
    props: {
@@ -49,11 +58,17 @@ export default {
    		type: Object
    	}
    },
+   components:{
+   	shopcart,
+   	cartcontrol,
+   	food
+   },
    data(){
       return {
       	goods:[],
       	listHeight:[],
-      	scrollY: 0
+      	scrollY: 0,
+        selectedFood:{}
       }
    },
    computed: {
@@ -68,6 +83,17 @@ export default {
           }
      	}
      	return 0;
+     },
+     selectFood(){
+     	let foods=[];
+     	this.goods.forEach((good)=>{
+         good.foods.forEach((food)=>{
+           if(food.count){
+           	foods.push(food);
+           }
+         });
+     	});
+     	return foods;
      }
    },
    created() {
@@ -125,6 +151,14 @@ methods: {
         let el = foodList[index]; // 滚动到响应的元素
         console.log(el);
         this.foodsScroll.scrollToElement(el, 300);
+      },
+      selectFoods(food,event){
+         if (!event._constructed) {
+             return;
+         }
+          this.selectedFood = food;
+          //console.log(this.selectedFood.image);
+          this.$refs.food.show();
       }
 
  }
@@ -233,4 +267,8 @@ methods: {
         text-decoration: line-through
         font-size: 10px
         color: rgb(147,153,159)
+       .cartcontrol-wrapper
+        position: absolute
+        right: 0
+        bottom: 12px
 </style>
